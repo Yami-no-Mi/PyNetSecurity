@@ -54,6 +54,22 @@ python tool_name.py
 
 ## 📄 License
 
+# MIT License
+
+© 2024 **Arash**
+
+## Permission is granted to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit others to do so, subject to the following conditions:
+
+- The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+## The Software is provided "as is", without warranty of any kind, express or implied, including but not limited to the warranties of merchantability, fitness for a particular purpose, and noninfringement. 
+
+In no event shall the authors or copyright holders be liable for any claim, damages, or other liability, whether in an action of contract, tort, or otherwise, arising from, out of, or in connection with the software or the use or other dealings in the software.
+
+---
+
+### Maintained by: [Arash](https://github.com/Yami-no-Mi)
+
 This project is licensed under the **MIT License**. See the [LICENSE](https://github.com/Yami-no-Mi/PyNetSecurity/tree/main?tab=MIT-1-ov-file#readme) file for more details.
 
 ---
