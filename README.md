@@ -34,7 +34,7 @@ Before getting started, make sure you have **Python 3.x** and **pip** installed 
 ### Install the repository
 
 Clone the repository to your local machine:
-```bash
+
 git clone https://github.com/Yami-no-Mi/PyNetSecurity.git
 cd PyNetSecurity
 
