@@ -36,11 +36,11 @@ def settings():
     while True:
         clear_screen()
         print(Fore.CYAN + "\n=== Settings ===")
-        time.sleep(0.2)
+        time.sleep(0.1)
         print(Fore.YELLOW + " [1] Update API keys (Not implemented)")
-        time.sleep(0.2)
+        time.sleep(0.1)
         print(Fore.YELLOW + " [2] Change configuration (Not implemented)")
-        time.sleep(0.2)
+        time.sleep(0.1)
         print(Fore.YELLOW + " [3] Back to main menu")
         
         choice = input(Fore.RED + " ┌─[" + Fore.LIGHTGREEN_EX + "SETTINGS" + Fore.RED + "]\n └──╼ " + Fore.WHITE + "$ ").strip()
@@ -62,13 +62,13 @@ def main_menu():
     while True:
         clear_screen()
         print(Fore.CYAN + "\n=== IP Geolocation Finder ===")
-        time.sleep(0.2)
+        time.sleep(0.1)
         print(Fore.LIGHTYELLOW_EX + " [1] Run the tool")
-        time.sleep(0.2)
+        time.sleep(0.1)
         print(Fore.LIGHTYELLOW_EX + " [2] Check Python installation")
-        time.sleep(0.2)
+        time.sleep(0.1)
         print(Fore.LIGHTYELLOW_EX + " [3] Settings")
-        time.sleep(0.2)
+        time.sleep(0.1)
         print(Fore.LIGHTYELLOW_EX + " [4] Exit")
         
         choice = input(Fore.RED + " ┌─[" + Fore.LIGHTGREEN_EX + "MAIN MENU" + Fore.RED + "]\n └──╼ " + Fore.WHITE + "$ ").strip()
