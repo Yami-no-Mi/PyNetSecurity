@@ -1,93 +1,92 @@
-from server import app
-import os
-import subprocess
-import time
+import requests
 from colorama import Fore, Style, init
+import os
 
-# Initialize colorama for cross-platform support
+# Initialize colorama for color support
 init(autoreset=True)
 
 def clear_screen():
     """Clear the console screen."""
     os.system('cls' if os.name == 'nt' else 'clear')
 
-def check_python():
-    """Check if Python is installed and return the version."""
+def get_ip_info(ip_address):
+    """Fetch IP information from the ipinfo.io API."""
+    API_URL = f"https://ipinfo.io/{ip_address}?token=98eb2a223ae38d"
     try:
-        result = subprocess.run(["python", "--version"], check=True, capture_output=True, text=True)
-        return f"{Fore.GREEN}[✓] Python is installed. Version: {result.stdout.strip()}"
-    except FileNotFoundError:
-        return f"{Fore.RED}[!] Python is not installed. Please install Python to proceed."
-    except Exception as e:
-        return f"{Fore.RED}[!] An error occurred: {str(e)}"
-
-def run_tool():
-    """Run the main tool by starting the Flask server."""
-    try:
-        print(Fore.GREEN + "[✓] Starting the tool... Server is running!")
-        subprocess.run(["python", "backend/app.py"], check=True)
-    except FileNotFoundError:
-        print(Fore.RED + "[!] Error: app.py not found in the backend directory.")
-    except Exception as e:
-        print(Fore.RED + f"[!] Error while running the tool: {str(e)}")
-
-def settings():
-    """Display settings options and handle user input."""
-    while True:
-        clear_screen()
-        print(Fore.CYAN + "\n=== Settings ===")
-        time.sleep(0.1)
-        print(Fore.YELLOW + " [1] Update API keys (Not implemented)")
-        time.sleep(0.1)
-        print(Fore.YELLOW + " [2] Change configuration (Not implemented)")
-        time.sleep(0.1)
-        print(Fore.YELLOW + " [3] Back to main menu")
-        
-        choice = input(Fore.RED + " ┌─[" + Fore.LIGHTGREEN_EX + "SETTINGS" + Fore.RED + "]\n └──╼ " + Fore.WHITE + "$ ").strip()
-        
-        if choice == "1":
-            print(Fore.GREEN + "[*] Updating API keys... (Feature not implemented)")
-            time.sleep(1)
-        elif choice == "2":
-            print(Fore.GREEN + "[*] Changing configuration... (Feature not implemented)")
-            time.sleep(1)
-        elif choice == "3":
-            break
+        response = requests.get(API_URL)
+        if response.status_code == 200:
+            return response.json()
         else:
-            print(Fore.RED + "[!] Invalid choice. Please try again.")
-            time.sleep(1)
+            return {"error": f"Unable to fetch data. Status code: {response.status_code}"}
+    except Exception as e:
+        return {"error": str(e)}
 
-def main_menu():
-    """Display the main menu and handle user input."""
-    while True:
-        clear_screen()
-        print(Fore.CYAN + "\n=== IP Geolocation Finder ===")
-        time.sleep(0.1)
-        print(Fore.LIGHTYELLOW_EX + " [1] Run the tool")
-        time.sleep(0.1)
-        print(Fore.LIGHTYELLOW_EX + " [2] Check Python installation")
-        time.sleep(0.1)
-        print(Fore.LIGHTYELLOW_EX + " [3] Settings")
-        time.sleep(0.1)
-        print(Fore.LIGHTYELLOW_EX + " [4] Exit")
-        
-        choice = input(Fore.RED + " ┌─[" + Fore.LIGHTGREEN_EX + "MAIN MENU" + Fore.RED + "]\n └──╼ " + Fore.WHITE + "$ ").strip()
-
-        if choice == "1":
-            print(Fore.GREEN + "[*] Starting the tool...")
-            time.sleep(1)
-            app.start_server()
-        elif choice == "2":
-            print(check_python())  # Check Python installation
-            input(Fore.YELLOW + "\nPress Enter to return to the menu.")
-        elif choice == "3":
-            settings()  # Show settings menu
-        elif choice == "4":
-            print(Fore.CYAN + "[*] Exiting the program. Goodbye!")
-            break
+def format_dict(data, level=1):
+    """Format nested dictionaries for better display."""
+    output = ""
+    for key, value in data.items():
+        if isinstance(value, dict):
+            output += f"{Fore.GREEN}{'  ' * level}[*] {key}:{Style.RESET_ALL}\n"
+            output += format_dict(value, level + 1)
         else:
-            print(Fore.RED + "[!] Invalid choice. Please try again.")
-            time.sleep(1)
+            output += f"{Fore.CYAN}{'  ' * level}[*] {key}: {Fore.WHITE}{value}{Style.RESET_ALL}\n"
+    return output
+
+def print_ip_info(data):
+    """Print IP information in a formatted and colored way."""
+    print(Fore.YELLOW + "\n=== IP-Geolocation-Finder ===" + Style.RESET_ALL)
+
+    general_keys = {
+        "ip": data.get("ip"),
+        "hostname": data.get("hostname"),
+        "city": data.get("city"),
+        "region": data.get("region"),
+        "country": data.get("country"),
+        "loc": data.get("loc"),
+        "postal": data.get("postal"),
+        "timezone": data.get("timezone"),
+        "anycast": data.get("anycast")
+    }
+
+    print(Fore.GREEN + "[*] GENERAL:" + Style.RESET_ALL)
+    for key, value in general_keys.items():
+        print(Fore.CYAN + f"  [*] {key}: {Fore.WHITE}{value}{Style.RESET_ALL}")
+
+    detailed_keys = {
+        "asn": data.get("asn"),
+        "privacy": data.get("privacy")
+    }
+
+    for key, value in detailed_keys.items():
+        if isinstance(value, dict):
+            print(Fore.GREEN + f"[*] {key.upper()}:{Style.RESET_ALL}")
+            print(format_dict(value))
+        else:
+            print(Fore.CYAN + f"[*] {key}: {Fore.WHITE}{value}{Style.RESET_ALL}")
+
+    print(Fore.YELLOW + "\n===========================\n" + Style.RESET_ALL)
+
+def main():
+    """Main function to get IP information from user input."""
+    clear_screen()
+    print(Fore.MAGENTA + "Welcome to the IP-Geolocation-Finder!" + Style.RESET_ALL)
+    print(Fore.BLUE + "Enter an IP address to retrieve geolocation information." + Style.RESET_ALL)
+    print(Fore.LIGHTBLACK_EX + "Type 'exit' to quit the application." + Style.RESET_ALL)
+
+    while True:
+        ip_address = input(Fore.CYAN + "\nEnter an IP address: " + Style.RESET_ALL).strip()
+        if ip_address.lower() == 'exit':
+            print(Fore.GREEN + "Exiting the tool. Goodbye!" + Style.RESET_ALL)
+            break
+
+        if ip_address:
+            data = get_ip_info(ip_address)
+            if "error" in data:
+                print(Fore.RED + f"Error: {data['error']}" + Style.RESET_ALL)
+            else:
+                print_ip_info(data)
+        else:
+            print(Fore.RED + "Invalid input. Please enter a valid IP address." + Style.RESET_ALL)
 
 if __name__ == "__main__":
-    main_menu()
+    main()
