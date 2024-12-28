@@ -91,6 +91,24 @@ def install_requirements():
     except subprocess.CalledProcessError:
         print(Fore.RED + "Failed to install required libraries. Please check 'requirements.txt'." + Style.RESET_ALL)
 
+def is_valid_ip(ip):
+    """Check if the provided IP address is valid."""
+    # Split the IP address into parts using '.' as a delimiter
+    parts = ip.split('.')
+    
+    # Check if the IP address has exactly 4 parts
+    if len(parts) != 4:
+        return False
+    
+    # Ensure each part is a number and within the valid range of 0-255
+    for part in parts:
+        if not part.isdigit():
+            return False
+        if not (0 <= int(part) <= 255):
+            return False
+    
+    return True
+
 def main():
     """Main function to get IP information from user input."""
     # Check if necessary libraries are installed
@@ -101,7 +119,7 @@ def main():
         # If libraries are not found, call the install_requirements function
         print(Fore.RED + "Required libraries are missing. Attempting to install..." + Style.RESET_ALL)
         install_requirements()
-    
+
     # Clear the screen
     clear_screen()
 
@@ -110,29 +128,36 @@ def main():
     print(Fore.BLUE + "Enter an IP address to retrieve geolocation information." + Style.RESET_ALL)
     print(Fore.LIGHTBLACK_EX + "Type 'exit' to quit the application." + Style.RESET_ALL)
 
-    while True:
-        # Ask for user input (IP address)
-        ip_address = input(Fore.CYAN + "\nEnter an IP address: " + Style.RESET_ALL).strip()
-        
-        # If the user wants to exit, break the loop
-        if ip_address.lower() == 'exit':
-            print(Fore.GREEN + "Exiting the tool. Goodbye!" + Style.RESET_ALL)
-            break
+    try:
+        while True:
+            # Ask for user input (IP address)
+            ip_address = input(Fore.CYAN + "\nEnter an IP address: " + Style.RESET_ALL).strip()
 
-        # If the user entered an IP address
-        if ip_address:
-            # Fetch IP information
-            data = get_ip_info(ip_address)
-            
-            # If there was an error fetching the data, print the error
-            if "error" in data:
-                print(Fore.RED + f"Error: {data['error']}" + Style.RESET_ALL)
+            # If the user wants to exit, break the loop
+            if ip_address.lower() == 'exit':
+                print(Fore.GREEN + "Exiting the tool. Goodbye!" + Style.RESET_ALL)
+                break
+
+            # Validate the IP address
+            if is_valid_ip(ip_address):
+                # Fetch IP information
+                data = get_ip_info(ip_address)
+
+                # If there was an error fetching the data, print the error
+                if "error" in data:
+                    print(Fore.RED + f"Error: {data['error']}" + Style.RESET_ALL)
+                else:
+                    # Print the IP information if successful
+                    print_ip_info(data)
             else:
-                # Print the IP information if successful
-                print_ip_info(data)
-        else:
-            # Handle invalid input (empty string)
-            print(Fore.RED + "Invalid input. Please enter a valid IP address." + Style.RESET_ALL)
+                # Handle invalid IP format
+                print(Fore.RED + "Invalid IP address. Please enter a valid IPv4 address." + Style.RESET_ALL)
+                # Ask the user to enter the IP again
+                continue  # This will restart the loop and ask for the input again
+
+    except KeyboardInterrupt:
+        # Gracefully handle Ctrl + C (KeyboardInterrupt)
+        print(Fore.GREEN + "\nExiting the tool. Goodbye!" + Style.RESET_ALL)
 
 # Check if the script is being executed directly
 if __name__ == "__main__":
